@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G14 • Weekly Timetable</title>
+<style>
+:root{
+  --bg:#f5f7fb;--surface:#fff;--surface2:#eef2f7;--text:#172033;--muted:#697386;
+  --line:#dce2eb;--navy:#142b49;--navy2:#1c3c63;--shadow:0 18px 50px rgba(20,43,73,.10);
+  --green:#dcefdc;--green-b:#5e9c61;--orange:#f4e1cd;--orange-b:#c9803b;
+  --red:#f5dada;--red-b:#cb6262;--yellow:#f5ecb9;--yellow-b:#c8ae2c;
+  --cyan:#d4eeee;--cyan-b:#3e9994;--olive:#ebe6ca;--olive-b:#9b9150;--blue:#dceaf5;--blue-b:#6497bd;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}.top{background:linear-gradient(135deg,var(--navy),var(--navy2));color:white}
+.topin{max-width:1400px;margin:auto;padding:28px 24px;display:flex;align-items:center;gap:18px}
+.badge{width:70px;height:70px;border-radius:16px;background:white;color:var(--navy);display:grid;place-items:center;font-weight:900;font-size:24px;box-shadow:0 10px 25px #07182b55}
+.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.72}.title{font-size:clamp(24px,4vw,38px);font-weight:850;margin:3px 0}.sub{font-size:13px;opacity:.78}
+.actions{margin-left:auto;display:flex;gap:8px}.btn{border:1px solid #ffffff2b;background:#ffffff12;color:white;padding:9px 12px;border-radius:10px;cursor:pointer}.btn:hover{background:#ffffff22}
+main{max-width:1400px;margin:26px auto;padding:0 20px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.search{flex:1;min-width:220px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 14px;outline:none;color:var(--text);box-shadow:0 5px 20px #142b4908}
+.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:2px}.tab{border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:9px 13px;border-radius:10px;cursor:pointer;white-space:nowrap}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.desktop{overflow:auto}.grid{min-width:980px;display:grid;grid-template-columns:86px repeat(6,1fr)}
+.cell{min-height:112px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px}
+.head{min-height:58px;background:var(--navy2);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:750;position:sticky;top:0;z-index:2}
+.time{background:#fafbfc;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;font-weight:750;text-align:center}
+.time span{display:block;font-weight:500;font-size:10px;margin-top:3px}
+.card{height:100%;border-radius:11px;padding:11px;border-left:5px solid;cursor:pointer;transition:.18s;box-shadow:0 4px 12px #142b4909}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px #142b4920}.subject{font-weight:850;font-size:13px}.type{font-size:9px;text-transform:uppercase;font-weight:800;opacity:.65;margin:6px 0}.info{font-size:10px;line-height:1.5;color:#536071}
+.empty{background:#fff}.break{grid-column:1/-1;min-height:32px;background:#f4f5f7;color:#7a8492;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;letter-spacing:.12em;border-bottom:1px solid var(--line)}
+.algo{background:var(--green);border-color:var(--green-b)}.machine{background:var(--orange);border-color:var(--orange-b)}.math{background:var(--red);border-color:var(--red-b)}.algebra{background:var(--yellow);border-color:var(--yellow-b)}.electricity{background:var(--cyan);border-color:var(--cyan-b)}.history{background:var(--olive);border-color:var(--olive-b)}.software{background:var(--blue);border-color:var(--blue-b)}
+.footer{padding:18px 20px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.legend{display:flex;gap:13px;flex-wrap:wrap}.leg{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center}.dot{width:10px;height:10px;border-radius:3px}
+.stats{font-size:11px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:#07111f99;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.show{display:flex}.modalbox{width:min(430px,100%);background:white;border-radius:18px;padding:22px;box-shadow:0 25px 80px #0004}.close{float:right;border:0;background:var(--surface2);border-radius:8px;width:32px;height:32px;cursor:pointer}.modal h2{margin:5px 40px 16px 0}.details{display:grid;gap:10px}.detail{padding:12px;background:#f6f8fb;border-radius:10px;font-size:13px}.detail b{display:block;font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.dark{--bg:#0c1420;--surface:#121c29;--surface2:#1b2736;--text:#edf2f8;--muted:#9aa7b7;--line:#263547}.dark .time,.dark .empty{background:#121c29}.dark .search{background:#121c29}.dark .modalbox{background:#121c29}.dark .detail{background:#1b2736}
+@media(max-width:700px){.topin{padding:20px 15px}.badge{width:56px;height:56px;font-size:19px;border-radius:13px}.actions{display:none}main{padding:0 10px;margin-top:15px}.panel{border-radius:13px}.footer{padding:15px}.grid{grid-template-columns:74px repeat(6,150px)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="topin">
+    <div class="badge">G14</div>
+    <div>
+      <div class="kicker">Bachelor Degree • Computer Systems • First Year</div>
+      <div class="title">Weekly Timetable</div>
+      <div class="sub">Semester 1 · Interactive schedule</div>
+    </div>
+    <div class="actions"><button class="btn" id="todayBtn">Today</button><button class="btn" id="themeBtn">☾</button></div>
+  </div>
+</header>
+
+<main>
+  <div class="toolbar">
+    <input id="search" class="search" placeholder="Search a subject, teacher or room…">
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <section class="panel">
+    <div class="desktop"><div class="grid" id="grid"></div></div>
+    <div class="footer">
+      <div class="legend" id="legend"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modalbox">
+    <button class="close" id="close">×</button>
+    <h2 id="modalTitle"></h2>
+    <div class="details" id="modalDetails"></div>
+  </div>
+</div>
+
+<script>
+const days=["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday"];
+const times=["08:00–09:30","09:30–11:00","11:00–12:30","13:00–14:30","14:30–16:00"];
+
+const classes=[
+ {day:"Tuesday",time:"08:00–09:30",subject:"Math analysis 1",type:"Lecture",teacher:"Mme Chaouch",room:"A/16",kind:"math"},
+ {day:"Wednesday",time:"08:00–09:30",subject:"Algorithmics 1",type:"Practical (TP)",teacher:"Zeghib",room:"S1",kind:"algo"},
+ {day:"Monday",time:"09:30–11:00",subject:"Algorithmics 1",type:"Lecture",teacher:"Pr. Bahi",room:"A/16",kind:"algo"},
+ {day:"Tuesday",time:"09:30–11:00",subject:"Algorithmics 1",type:"Lecture",teacher:"Pr. Bahi",room:"A/16",kind:"algo"},
+ {day:"Wednesday",time:"09:30–11:00",subject:"Machine structure 1",type:"Lecture",teacher:"Mme Kobsi",room:"A/12",kind:"machine"},
+ {day:"Thursday",time:"09:30–11:00",subject:"Algebra 1",type:"Lecture",teacher:"Dr. Neg...",room:"A/16",kind:"algebra"},
+ {day:"Saturday",time:"11:00–12:30",subject:"Basic electricity",type:"Lecture",teacher:"Dr. Kilah",room:"A/12",kind:"electricity"},
+ {day:"Sunday",time:"11:00–12:30",subject:"Math analysis 1",type:"Lecture",teacher:"Mme Chaouch",room:"A/12",kind:"math"},
+ {day:"Monday",time:"11:00–12:30",subject:"Math analysis 1",type:"Tutorial (TD)",teacher:"Not listed",room:"B25",kind:"math"},
+ {day:"Tuesday",time:"11:00–12:30",subject:"Machine structure 1",type:"Tutorial (TD)",teacher:"Amriouche",room:"Not listed",kind:"machine"},
+ {day:"Wednesday",time:"11:00–12:30",subject:"Algorithmics 1",type:"Tutorial (TD)",teacher:"Chebli",room:"B22",kind:"algo"},
+ {day:"Thursday",time:"11:00–12:30",subject:"Algebra 1",type:"Tutorial (TD)",teacher:"Djeridi",room:"B23",kind:"algebra"},
+ {day:"Saturday",time:"13:00–14:30",subject:"History",type:"Lecture",teacher:"Not listed",room:"Online",kind:"history"},
+ {day:"Sunday",time:"13:00–14:30",subject:"Basic electricity",type:"Tutorial (TD)",teacher:"Not listed",room:"B21",kind:"electricity"},
+ {day:"Saturday",time:"14:30–16:00",subject:"Free software (open source)",type:"Lecture",teacher:"Dr. Dendani B.",room:"Online",kind:"software"}
+];
+
+const colors={algo:"Algorithmics 1",machine:"Machine structure 1",math:"Math analysis 1",algebra:"Algebra 1",electricity:"Basic electricity",history:"History",software:"Free software"};
+
+const grid=document.getElementById("grid"), tabs=document.getElementById("tabs"), search=document.getElementById("search");
+let active="All";
+
+function renderTabs(){
+ tabs.innerHTML='<button class="tab '+(active==="All"?"active":"")+'" data-day="All">All</button>'+
+ days.map(d=>`<button class="tab ${active===d?"active":""}" data-day="${d}">${d}</button>`).join("");
+ tabs.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{active=b.dataset.day;render()});
+}
+
+function matches(c){
+ const q=search.value.trim().toLowerCase();
+ return (active==="All"||c.day===active) &&
+   (!q || [c.subject,c.type,c.teacher,c.room].join(" ").toLowerCase().includes(q));
+}
+
+function card(c){
+ return `<div class="card ${c.kind}" data-id="${classes.indexOf(c)}">
+   <div class="subject">${c.subject}</div><div class="type">${c.type}</div>
+   <div class="info">Teacher: <b>${c.teacher}</b><br>Room: <b>${c.room}</b></div>
+ </div>`;
+}
+
+function render(){
+ renderTabs();
+ let html=`<div class="cell head">TIME</div>`+days.map(d=>`<div class="cell head">${d}</div>`).join("");
+ times.forEach((t,i)=>{
+   if(i===3) html+=`<div class="break">BREAK · 12:30 — 13:00</div>`;
+   html+=`<div class="cell time">${t.split("–")[0]}<span>${t.split("–")[1]}</span></div>`;
+   days.forEach(d=>{
+     const c=classes.find(x=>x.day===d&&x.time===t&&matches(x));
+     html+=`<div class="cell">${c?card(c):""}</div>`;
+   });
+ });
+ grid.innerHTML=html;
+ grid.querySelectorAll(".card").forEach(el=>el.onclick=()=>openModal(classes[+el.dataset.id]));
+ document.getElementById("stats").textContent=`${classes.filter(matches).length} sessions shown · ${classes.length} total sessions`;
+}
+function openModal(c){
+ document.getElementById("modalTitle").textContent=c.subject;
+ document.getElementById("modalDetails").innerHTML=
+ `<div class="detail"><b>Day</b>${c.day}</div>
+  <div class="detail"><b>Time</b>${c.time}</div>
+  <div class="detail"><b>Session</b>${c.type}</div>
+  <div class="detail"><b>Teacher</b>${c.teacher}</div>
+  <div class="detail"><b>Room</b>${c.room}</div>`;
+ document.getElementById("modal").classList.add("show");
+}
+search.oninput=render;
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("show");
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("show")};
+document.getElementById("themeBtn").onclick=()=>document.body.classList.toggle("dark");
+document.getElementById("todayBtn").onclick=()=>{
+ const d=new Intl.DateTimeFormat("en-US",{weekday:"long"}).format(new Date());
+ active=days.includes(d)?d:"All"; render();
+};
+render();
+
+document.getElementById("legend").innerHTML=Object.entries(colors).map(([k,v])=>`<div class="leg"><span class="dot ${k}"></span>${v}</div>`).join("");
+</script>
+</body>
+</html>
